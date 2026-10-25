@@ -1,0 +1,464 @@
+/* System fonts only: no requests to Google Fonts, so the page also loads fast in China. */
+:root {
+  color-scheme: light;
+  --paper: #ffffff;
+  --ink: #1d2427;
+  --muted: #5b6369;
+  --rule: #e6e8eb;
+  --accent: #1f6a57;
+  --accent-hover: #124637;
+
+  /* Profile column. Same colour as the page by default; change these five to restyle it. */
+  --sidebar: var(--paper);
+  --sidebar-ink: var(--ink);
+  --sidebar-muted: var(--muted);
+  --sidebar-link: var(--accent);
+  --sidebar-rule: var(--rule);
+
+  /* One colour per field, shared by tags, filters and the About text. */
+  --env: #2e6c45;
+  --env-bg: #dfeee3;
+  --dev: #8a5016;
+  --dev-bg: #f3e6d2;
+  --urban: #31578a;
+  --urban-bg: #e0e8f3;
+  --health: #8a3557;
+  --health-bg: #f4e2ea;
+  --innov: #5a478f;
+  --innov-bg: #ebe6f5;
+
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia,
+           "Songti SC", "Noto Serif CJK SC", serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial,
+          "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+}
+
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+html { -webkit-text-size-adjust: 100%; }
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+  text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
+}
+a:hover { color: var(--accent-hover); text-decoration-color: currentColor; }
+a:focus-visible, button:focus-visible, summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ---------- Layout: sticky profile column + reading column ---------- */
+
+/* Centred as one block, so wide screens don't leave a blank strip on the right. */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(220px, 272px) minmax(0, 1fr);
+  max-width: 1240px;
+  min-height: 100vh;
+  margin: 0 auto;
+}
+
+.profile {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  background: var(--sidebar);
+  color: var(--sidebar-ink);
+  border-right: 1px solid var(--rule);
+}
+
+.profile-body { padding: 56px 28px 32px; }
+
+.portrait {
+  display: block;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  /* A hairline instead of a white ring + shadow, and slightly calmer colours,
+     so the bright sky and willow sit with the warm page instead of on top of it. */
+  box-shadow: 0 0 0 1px var(--rule);
+  filter: saturate(0.82) sepia(0.06);
+}
+
+.name {
+  margin: 20px 0 2px;
+  font-size: 23px;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.005em;
+}
+.name-zh {
+  margin: 0 0 12px;
+  color: var(--sidebar-muted);
+  font-size: 14.5px;
+  letter-spacing: 0.12em;
+}
+.name + .role { margin-top: 10px; }
+.role {
+  margin: 0 0 18px;
+  color: var(--sidebar-muted);
+  font-family: var(--sans);
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+.role a { color: inherit; text-decoration: none; }
+.role a:hover { color: var(--sidebar-link); text-decoration: underline; }
+/* The profile column holds links only (email, LinkedIn, later Scholar etc.). */
+.links {
+  margin: 0;
+  padding: 14px 0 0;
+  list-style: none;
+  border-top: 1px solid var(--sidebar-rule);
+  font-family: var(--sans);
+  font-size: 13px;
+}
+.links li + li { margin-top: 8px; }
+.links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--sidebar-link);
+  text-decoration: none;
+}
+.links a:hover { text-decoration: underline; }
+.links svg { flex: none; width: 15px; height: 15px; }
+
+main {
+  width: 100%;
+  padding: 24px clamp(24px, 5vw, 72px) 40px;
+}
+
+/* Sticky tab bar; main.js marks the section being read with aria-current. */
+.site-nav {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  gap: 26px;
+  padding-top: 16px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--sans);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.site-nav::-webkit-scrollbar { display: none; }
+.site-nav a {
+  flex: none;
+  margin-bottom: -1px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid transparent;
+  color: var(--muted);
+  text-decoration: none;
+}
+.site-nav a:hover { color: var(--ink); }
+.site-nav a[aria-current] { color: var(--ink); border-bottom-color: var(--ink); }
+
+/* Keep jump targets clear of the sticky bar. */
+section[id], .paper-group[id] { scroll-margin-top: 56px; }
+
+/* ---------- Sections ---------- */
+
+h2 {
+  margin: 48px 0 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--rule);
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+section:first-of-type h2 { margin-top: 32px; padding-top: 0; border-top: 0; }
+
+section p { margin: 0 0 1em; }
+
+/* Links inside prose (About, Research Experience) stay the colour of the text, with a faint underline. */
+#about a,
+#experience a {
+  color: inherit;
+  text-decoration-color: color-mix(in srgb, currentColor 25%, transparent);
+}
+#about a:hover,
+#experience a:hover { color: var(--accent); text-decoration-color: currentColor; }
+
+.field { padding: 0 2px; border-radius: 3px; }
+.field--env { background: var(--env-bg); }
+.field--dev { background: var(--dev-bg); }
+.field--urban { background: var(--urban-bg); }
+.field--health { background: var(--health-bg); }
+
+/* ---------- Research ---------- */
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 8px;
+  font-family: var(--sans);
+}
+.filters button {
+  padding: 4px 13px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 12.5px;
+  cursor: pointer;
+}
+.filters button:hover { border-color: var(--muted); }
+.filters button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+
+.paper-group h3 {
+  margin: 36px 0 2px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--ink);
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.paper { padding: 14px 0; }
+.paper + .paper { border-top: 1px solid var(--rule); }
+
+/* A paper with one signature figure beside it: add class paper--featured and a .paper-figure. */
+.paper--featured {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 200px;
+  gap: 28px;
+  align-items: start;
+}
+
+.paper-title {
+  margin: 0 0 3px;
+  font-size: 16.5px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.paper-title a { color: inherit; text-decoration: none; }
+.paper-title a:hover { color: var(--accent); text-decoration: underline; }
+.paper-title-zh {
+  margin: 0 0 3px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.paper-meta {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14.5px;
+}
+.paper-meta strong { color: var(--ink); font-weight: 600; }
+.paper-meta a { color: inherit; }
+.paper-venue { color: var(--ink); }
+.paper-note {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 13.5px;
+  font-style: italic;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 500;
+}
+.tag { padding: 1px 9px; border-radius: 999px; }
+.tag--env { background: var(--env-bg); color: var(--env); }
+.tag--dev { background: var(--dev-bg); color: var(--dev); }
+.tag--urban { background: var(--urban-bg); color: var(--urban); }
+.tag--health { background: var(--health-bg); color: var(--health); }
+.tag--innov { background: var(--innov-bg); color: var(--innov); }
+
+/* Tags and the abstract button share one row. */
+.paper-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 14px;
+  margin-top: 10px;
+}
+.paper-foot .tags { margin: 0; }
+.abstract-toggle {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font-family: var(--sans);
+  font-size: 13px;
+  cursor: pointer;
+}
+.abstract-toggle::before { content: "+"; display: inline-block; width: 1em; }
+.abstract-toggle[aria-expanded="true"]::before { content: "\2212"; }
+.abstract-toggle:hover { color: var(--accent-hover); }
+.abstract-text {
+  margin: 8px 0 0;
+  padding-left: 14px;
+  border-left: 2px solid var(--rule);
+  font-size: 15px;
+}
+
+.paper-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin: 6px 0 0;
+  font-family: var(--sans);
+  font-size: 14px;
+}
+
+.paper-figure { margin: 4px 0 0; }
+.paper-figure img {
+  display: block;
+  width: 100%;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+}
+.paper-figure figcaption {
+  margin-top: 6px;
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 12.5px;
+  line-height: 1.4;
+}
+
+.group-note {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 13px;
+}
+
+/* ---------- Experience and honors: text left, years right ---------- */
+
+.entries { margin: 0; padding: 0; list-style: none; font-size: 15px; }
+.entries > li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  padding: 7px 0;
+}
+.entries > li + li { border-top: 1px solid var(--rule); }
+.entry-title { margin: 0; }
+.entry-points {
+  margin: 6px 0 0;
+  padding-left: 18px;
+  color: var(--muted);
+  font-size: 14px;
+}
+.entry-points li + li { margin-top: 3px; }
+
+/* ---------- News: date column + one line each ---------- */
+
+.news { margin: 0; padding: 0; list-style: none; font-size: 15px; }
+.news li {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: 14px;
+  padding: 5px 0;
+}
+.news-date {
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 13px;
+  line-height: 1.75;
+  font-variant-numeric: tabular-nums;
+}
+.entries .year {
+  flex: none;
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.site-footer {
+  margin-top: 72px;
+  padding-top: 14px;
+  border-top: 1px solid var(--rule);
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 12.5px;
+}
+.site-footer p { margin: 0; }
+
+/* ---------- Narrow screens: profile becomes a header ---------- */
+
+@media (max-width: 860px) {
+  body { font-size: 15.5px; }
+
+  .layout { display: block; }
+
+  .profile {
+    position: static;
+    height: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .profile-body {
+    display: grid;
+    grid-template-columns: 76px minmax(0, 1fr);
+    column-gap: 18px;
+    align-items: center;
+    padding: 28px 16px 20px;
+  }
+  .portrait { width: 76px; height: 76px; grid-row: 1 / span 3; }
+  .name { margin: 0; font-size: 22px; }
+  .name-zh { margin: 0; font-size: 15px; }
+  .role { margin: 4px 0 0; font-size: 13.5px; }
+
+  .links {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 22px;
+    margin-top: 18px;
+    padding-top: 12px;
+    font-size: 14px;
+  }
+  .links li + li { margin-top: 0; }
+
+  main { padding: 20px 16px 32px; }
+
+  .paper--featured { display: block; }
+  .paper-figure { max-width: 320px; margin-top: 16px; }
+}
+
+/* ---------- Referee service: one line of journal names ---------- */
+
+.service { margin: 0; font-size: 15px; }
