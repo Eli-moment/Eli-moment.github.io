@@ -94,10 +94,8 @@ a:focus-visible, button:focus-visible, summary:focus-visible {
   height: 96px;
   border-radius: 50%;
   object-fit: cover;
-  /* A hairline instead of a white ring + shadow, and slightly calmer colours,
-     so the bright sky and willow sit with the warm page instead of on top of it. */
+  /* A hairline instead of a white ring + shadow. */
   box-shadow: 0 0 0 1px var(--rule);
-  filter: saturate(0.82) sepia(0.06);
 }
 
 .name {
